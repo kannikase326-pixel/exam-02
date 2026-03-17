@@ -490,6 +490,7 @@ body {
     <div class="chip chip-w" id="chip-w">✕ 0</div>
     <div class="chip chip-c" id="chip-c">✓ 0</div>
   </div>
+  <button onclick="showAll()" style="margin-left:10px;">📚</button>
 </div>
 
 <div class="main" id="main">
@@ -564,7 +565,6 @@ const RAW = [
   {id:61,text:"จากรูป คืออุปกรณ์อะไร (Coaxial cylindrical)",img:"images/q27.png",opts:["Coaxial cylindrical impulse resistor","Coaxial cylindrical parallel resistor","Coaxial cylindrical series resistor","Coaxial cylindrical shunt resistor"],ans:3},
   {id:62,text:"จากรูป CP หมายถึงอะไร",img:"images/q28.png",opts:["Cable protection","Current probe","Current protection","Current divider"],ans:1},
   {id:63,text:"เมื่อ b = 1009.8 hPa; t = 30.6 °C จงคำนวณหาค่า Ub ที่สภาพบรรยากาศ (กำหนดให้ Ubn = 695 kVp)",opts:["679.7 kVp","668.6 kVp","688.7 kVp","674.8 kVp"],ans:1},
- 
   {id:64,text:"จากรูป กำหนดให้ TA = 180 nS, TB = 960 nS จงคำนวณหาค่า T1",img:"images/q29.png",opts:["1.9 μs","468 nS","780 nS","1.3 μs"],ans:3},
   {id:65,text:"ความต้านทานจำเพาะ มีหน่วยเป็นอะไร",opts:["Ohm-cm","kOhm/cm","Ohm/cm","Ohm"],ans:0},
   {id:66,text:"รากสายดินทองแดงหนา 3.5 mm กว้าง 35 mm ยาว 100 m ความต้านทานจำเพาะ 211 Ω·m จงหาความต้านทานรากสายดิน",opts:["4.50 Ω","4.55 Ω","4.40 Ω","4.45 Ω"],ans:0},
@@ -574,7 +574,6 @@ const RAW = [
   {id:70,text:"ในทางปฏิบัติ วงจรสร้างแรงดันอิมพัลส์จะมีความหน่วงนำ ซึ่งอาจทำให้เกิดการออสซิลเลชั่น ถ้ากำหนดให้ Cb = 1 nF; CS = 10 nF; L = 30 µH จงคำนวณหาค่า Rd",opts:["363 Ω","636 kΩ","363 kΩ","636 Ω"],ans:0},
   {id:71,text:"รูปคลื่นมาตรฐานแรงดันอิมพัลส์ฟ้าผ่าแบบเต็มคลื่น T1 มีค่าเท่าไร",opts:["1.2 μs","ถูกทุกข้อ","1.667T","5/3T"],ans:1},
   {id:72,text:"เมื่อ U1 = 22.5 kV (50 Hz); Cn = 100 pF; R4 = 5 MOhm; C4 = 54 pF; R3 = 3.6 MOhm จงคำนวณหามุม delta",img:"images/q32.png",opts:["4.48 องศา","4.44 องศา","8.44 องศา","4.84 องศา"],ans:3},
-  
   {id:73,text:"ถ้า C-divider สำหรับการวัดไฟฟ้าแรงดันสูงอิมพัลส์ มีค่า Time response = 17.5 nS, Ce = 10 pF จงคำนวณหาค่า Rd",opts:["1750 Ohm","17.50 kOhm","10.50 kOhm","1050 Ohm"],ans:2},
   {id:74,text:"กรณีที่ต้องการแรงดันสูงกว่า 500–600 kV จะนิยมใช้หม้อแปลงทดสอบแบบใด",opts:["Symmetrical Tr.","Resonance Tr.","Cascade Tr.","Asymmetrical Tr."],ans:2},
   {id:75,text:"มาตรฐานการวัดแรงดันสูงด้วยช่องว่างทรงกลมคือข้อใด",opts:["IEC 60270","IEC 60052","IEC 60071","IEC 60060"],ans:1},
@@ -582,7 +581,6 @@ const RAW = [
   {id:77,text:"ที่ระยะแกป d = 30 cm; โดยเลือกใช้ทรงกลมขนาด D = 75 cm จงหาค่า Ubn เมื่อต้องการวัดแรงดัน Positive lightning impulse",opts:["665 kVrms","665 kVp","695 kVp","695 kVrms"],ans:2},
   {id:78,text:"จากรูป คือวงจรอะไร (Rogowski coil integrator)",img:"images/q33.png",opts:["LC integrator of Rogowski coil","LRC integrator of Rogowski coil","LR integrator of Rogowski coil","RC integrator of Rogowski coil"],ans:3},
   {id:79,text:"ปัจจัยสำคัญที่มีผลต่อแรงดันตกคร่อมความต้านทานกรากสายดิน คืออะไร",opts:["di/dt","du/dt","Q","ipeak"],ans:3},
-  
   {id:80,text:"รูปคลื่นแรงดันทดสอบ AC มาตรฐานอธิบายได้ด้วยค่าอะไร",opts:["Urms/Uave","Upeak/Uave","Upeak/Urms","Urms/Upeak"],ans:2},
   {id:81,text:"จากรูป ถ้ามุมป้องกัน = 30 องศา hg = 45.50 m, ระยะ X = 3.17 m จงคำนวณหาความสูงของสายเฟส",img:"images/q34.png",opts:["40.8 m","39.5 m","39.0 m","40.0 m"],ans:3},
   {id:82,text:"จากรูป C2 ทำหน้าที่อะไร",img:"images/q35.png",opts:["Voltage increase","Rectifier","Current limit","Current filter"],ans:3},
@@ -608,6 +606,7 @@ const LABELS = ['ก','ข','ค','ง'];
 /* ═══════════════════════════════════
    STATE
 ═══════════════════════════════════ */
+let attemptState = {}; // เก็บจำนวนครั้งที่ตอบผิดแต่ละข้อ (session นี้)
 // wrongCount[id] = number of times answered wrong (persistent across sessions)
 let wrongCount = {};
 try { wrongCount = JSON.parse(localStorage.getItem('hv_wrong') || '{}'); } catch(e){}
@@ -672,14 +671,39 @@ function updateTopBar() {
    ANSWER
 ═══════════════════════════════════ */
 function doAnswer(qId, chosen) {
-  if(answered[qId]) return;
   const q = RAW.find(x=>x.id===qId);
+
+  if(!attemptState[qId]) attemptState[qId] = 0;
+
   const isCorrect = chosen === q.ans;
-  answered[qId] = {chosen, correct: isCorrect};
-  if(!isCorrect) {
+
+  // ✅ ถูก
+  if(isCorrect){
+    answered[qId] = {chosen, correct: true};
+    attemptState[qId] = 0;
+    updateTopBar();
+    renderCard();
+    return;
+  }
+
+  // ❌ ผิด
+  attemptState[qId]++;
+
+  // ผิดครั้งแรก → ใบ้
+  if(attemptState[qId] === 1){
     wrongCount[qId] = (wrongCount[qId]||0) + 1;
     saveWrong();
+    renderCard(true); // ส่ง flag ว่า hint mode
+    return;
   }
+
+  // ❌ ผิดครั้งที่ 2 → เฉลย
+  answered[qId] = {chosen, correct: false};
+  wrongCount[qId] = (wrongCount[qId]||0) + 1;
+  saveWrong();
+
+  attemptState[qId] = 0;
+
   updateTopBar();
   renderCard();
 }
@@ -731,7 +755,7 @@ function renderMain() {
   updateTopBar();
 }
 
-function renderCard() {
+function renderCard(isHint = false) {
   const cardArea = document.getElementById('card-area');
   const navArea = document.getElementById('nav-area');
   if(!cardArea) return;
@@ -756,20 +780,30 @@ function renderCard() {
   const wc = wrongCount[q.id] || 0;
 
   let optsHtml = '';
-  q.opts.forEach((opt, i) => {
-    if(opt === '—') return;
-    let cls = 'opt';
-    if(ans) {
-      if(i === q.ans) cls += ' is-correct';
-      else if(i === ans.chosen && !ans.correct) cls += ' is-wrong';
-      else cls += ' is-reveal';
-    }
+q.opts.forEach((opt, i) => {
+  if(opt === '—') return;
+
+  let cls = 'opt';
+  let hide = false;
+
+  // 🔥 โหมดใบ้ → ซ่อนบางตัวเลือกผิด
+  if(isHint && i !== q.ans){
+    hide = Math.random() > 0.5;
+  }
+
+  if(ans) {
+    if(i === q.ans) cls += ' is-correct';
+    else if(i === ans.chosen && !ans.correct) cls += ' is-wrong';
+    else cls += ' is-reveal';
+  }
+
+  if(!hide){
     optsHtml += `<button class="${cls}" ${ans?'disabled':''} onclick="doAnswer(${q.id},${i})">
       <span class="opt-lbl">${LABELS[i]}.</span>
       <span>${opt}</span>
     </button>`;
-  });
-
+  }
+});
   let resultHtml = '';
   if(ans) {
     if(ans.correct) {
@@ -788,7 +822,9 @@ function renderCard() {
       ${wc>0 ? `<span class="q-wrong-count">✕ ตอบผิดแล้ว ${wc} ครั้ง</span>` : ''}
     </div>
   <div class="q-text">${q.text}</div>
-
+${isHint ? `<div class="result-box" style="background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);">
+  ❗ ใบ้: ลองเลือกใหม่อีกครั้ง
+</div>` : ''}
 ${q.img ? `
   <div class="q-img">
     <img src="${q.img}" alt="question image">
@@ -842,7 +878,24 @@ function resetWrongData() {
     renderMain();
   }
 }
+function showAll(){
+  const main = document.getElementById('main');
 
+  main.innerHTML = `
+    <div class="q-card">
+      <h2>📚 ข้อสอบทั้งหมด</h2>
+
+      ${RAW.map(q=>`
+        <div style="margin-bottom:20px;">
+          <div><b>ข้อ ${q.id}:</b> ${q.text}</div>
+          <div style="color:green;">✅ ${q.opts[q.ans]}</div>
+        </div>
+      `).join('')}
+
+      <button class="nav-btn nav-primary" onclick="renderMain()">กลับ</button>
+    </div>
+  `;
+}
 /* ═══════════════════════════════════
    DONE SCREEN
 ═══════════════════════════════════ */
