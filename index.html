@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ข้อสอบ High Voltage Testing — 91 ข้อ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --correct: #00e676;
+    --wrong: #ff4444;
+    --text: #e8f0fe;
+    --muted: #6b7fa3;
+    --gold: #ffd700;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 30px;
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    padding: 4px 12px;
+    margin-bottom: 16px;
+    border-radius: 2px;
+  }
+
+  h1 {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  #stat-answered .stat-value { color: var(--accent); }
+  #stat-correct .stat-value { color: var(--correct); }
+  #stat-wrong .stat-value { color: var(--wrong); }
+  #stat-score .stat-value { color: var(--gold); }
+
+  /* Filter tabs */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .filter-btn {
+    padding: 7px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: var(--surface);
+    border-radius: 4px;
+    height: 6px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #007bff);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-card.answered-correct { border-color: var(--correct); background: rgba(0,230,118,0.05); }
+  .question-card.answered-wrong { border-color: var(--wrong); background: rgba(255,68,68,0.05); }
+  .question-card.hidden { display: none; }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .q-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+    flex: 1;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    transform: translateX(3px);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Answer states */
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: rgba(0,230,118,0.12);
+    color: var(--correct);
+  }
+
+  .option-btn.correct .option-label { color: var(--correct); }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,68,68,0.12);
+    color: var(--wrong);
+  }
+
+  .option-btn.wrong .option-label { color: var(--wrong); }
+
+  .option-btn.reveal-correct {
+    border-color: var(--correct);
+    background: rgba(0,230,118,0.08);
+  }
+
+  /* Result badge */
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-top: 12px;
+  }
+
+  .result-badge.correct { color: var(--correct); background: rgba(0,230,118,0.1); }
+  .result-badge.wrong { color: var(--wrong); background: rgba(255,68,68,0.1); }
+
+  /* Reset button */
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    border: none;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover { background: #00b8d9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Score modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+  }
+
+  .modal-overlay.show .modal { transform: scale(1); }
+
+  .modal-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin: 16px 0;
+  }
+
+  .modal-grade {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .modal-detail {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* Scroll to top */
+  .scroll-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+    transition: all 0.2s;
+  }
+
+  .scroll-top:hover { transform: translateY(-3px); }
+  .scroll-top.visible { display: flex; }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 16px; }
+    .q-text { font-size: 14px; }
+    .option-btn { font-size: 14px; padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-badge">⚡ High Voltage Testing</div>
+    <h1>แบบทดสอบ <span>ไฟฟ้าแรงสูง</span></h1>
+    <div class="subtitle">91 ข้อ — คลิกเลือกคำตอบเพื่อเช็คเฉลยทันที</div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card" id="stat-answered">
+      <span class="stat-value" id="val-answered">0</span>
+      <div class="stat-label">ตอบแล้ว / 91</div>
+    </div>
+    <div class="stat-card" id="stat-correct">
+      <span class="stat-value" id="val-correct">0</span>
+      <div class="stat-label">ถูก</div>
+    </div>
+    <div class="stat-card" id="stat-wrong">
+      <span class="stat-value" id="val-wrong">0</span>
+      <div class="stat-label">ผิด</div>
+    </div>
+    <div class="stat-card" id="stat-score">
+      <span class="stat-value" id="val-score">—</span>
+      <div class="stat-label">คะแนน %</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-btn active" onclick="filterQ('all', this)">ทั้งหมด (91)</button>
+    <button class="filter-btn" onclick="filterQ('unanswered', this)">ยังไม่ตอบ</button>
+    <button class="filter-btn" onclick="filterQ('correct', this)">ถูก ✓</button>
+    <button class="filter-btn" onclick="filterQ('wrong', this)">ผิด ✗</button>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="showScore()">ดูคะแนนรวม</button>
+    <button class="btn btn-secondary" onclick="resetAll()">เริ่มใหม่ทั้งหมด</button>
+    <button class="btn btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ ขึ้นบนสุด</button>
+  </div>
+</div>
+
+<!-- Score Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div style="font-size:48px">🏆</div>
+    <div class="modal-score" id="modal-score-val">0%</div>
+    <div class="modal-grade" id="modal-grade"></div>
+    <div class="modal-detail" id="modal-detail"></div>
+    <button class="btn btn-primary" onclick="document.getElementById('modal-overlay').classList.remove('show')">ปิด</button>
+  </div>
+</div>
+
+<button class="scroll-top" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const questions = [
+  { id:1, text:"จากรูป U1 = 22.5 kV (50 Hz); C2 = 30 pF; R2 = 6 MΩ; จงคำนวณหาค่า tan delta", options:["0.0546","0.0565","0.5654","0.0056"], answer:1 },
+  { id:2, text:"มาตรฐานเดิม สำหรับการทดสอบลูกถ้วยฉนวนเจาะทะลุคือ", options:["ป้อนด้วยแรงดัน AC","ป้อนด้วยแรงดัน LI","ป้อนด้วยแรงดัน DC","ป้อนด้วยแรงดัน SI"], answer:0 },
+  { id:3, text:"ข้อใดกล่าวถูกต้องเกี่ยวกับ Electrical methods of PD detection", options:["เหมาะสำหรับใช้หาตำแหน่ง PD","เหมาะสำหรับใช้หาปริมาณ PD","เหมาะสำหรับใช้ตรวจสอบสถานะของ PD","เหมาะสำหรับใช้หาความถี่ PD"], answer:1 },
+  { id:4, text:"วัตถุประสงค์ของการสร้างแรงดันอิมพัลส์หน้าคลื่นชันคือ", options:["ใช้ทดสอบความคงทนของลูกถ้วยฉนวนประเภท D","ใช้ทดสอบความคงทนของลูกถ้วยฉนวนประเภท C","ใช้ทดสอบความคงทนของลูกถ้วยฉนวนประเภท A","ใช้ทดสอบความคงทนของลูกถ้วยฉนวนประเภท B"], answer:3 },
+  { id:5, text:"ปริมาตรฉนวนของหม้อแปลงไฟฟ้ากำลังแปรผันกับค่าอะไร", options:["UL²","UL³","UH²","UH³"], answer:3 },
+  { id:6, text:"Transformer oil ถูกจำแนกเป็นฉนวนประเภทใด", options:["Liquid insulation","Self-restoring insulation","Internal insulation","ถูกทุกข้อ"], answer:3 },
+  { id:7, text:"จากรูป เป็นลักษณะการจัดวางระบบส่งจ่ายแบบใด", options:["Solid grounded system","Isolated system","Resistance grounded system","Resonant grounded system"], answer:3 },
+  { id:8, text:"การทดสอบข้อใดจัดอยู่ในประเภท Type test", options:["System voltage test","Over voltage test","Flash over test","Temp cycle test"], answer:2 },
+  { id:9, text:"จากรูป P หมายถึงอะไร", options:["Insulator type B","Insulator type C","Insulator type A","ถูกทุกข้อ"], answer:0 },
+  { id:10, text:"(โจทย์หม้อแปลง cascade) จงหาขนาด kVA", options:["40 kVA","120 kVA","80 kVA","160 kVA"], answer:0 },
+  { id:11, text:"ต้องการ bandwidth กว้างขึ้น ควรออกแบบอย่างไร", options:["ด้านในหนา","ไม่มีข้อใดถูก","ใช้วัสดุค่าความนำสูง","ด้านในบาง"], answer:3 },
+  { id:12, text:"วิธีตรวจจับ PD แบบ DC อ้างอิงมาตรฐานใด", options:["IEC 60052","IEC 60270","IEC 60060-1","IEC 60071-1"], answer:1 },
+  { id:13, text:"ค่า Ka ใน IEC 71-1 หมายถึง", options:["Air conversion factor","Voltage ratio correction factor","Safety factor","Atmospheric correction factor"], answer:3 },
+  { id:14, text:"การวัดค่าแฟกเตอร์พลังงานสูญเสีย (ฉนวน) นิยมใช้อะไร", options:["Schering bridge","Glynne Bridge","Transformer ratio Arm Bridge","ถูกทุกข้อ"], answer:3 },
+  { id:15, text:"จากรูป หมายเลข 6 คืออะไร", options:["ถูกทุกข้อ","Bushing แบบ R","Bushing แบบ Normal","Bushing แบบ C"], answer:3 },
+  { id:16, text:"เมื่อเกิดฟ้าผ่าใกล้ตัว ควรทำอย่างไร", options:["นอนราบ","พนมมือ","วิ่งหนี","ยืนกระต่ายขาเดียว"], answer:3 },
+  { id:17, text:"คำนวณค่า Ub", options:["0 kV","45.36 kV","55.53 kV","42.75 kV"], answer:3 },
+  { id:18, text:"แรงเคลื่อนเหนี่ยวนำขึ้นกับอะไร", options:["du/dt","Q","Ipeak","di/dt"], answer:3 },
+  { id:19, text:"ใครให้นิยามฟ้าผ่า", options:["Thomas Edison","Benjamin Franklin","Frankenstein","Nikola Tesla"], answer:1 },
+  { id:20, text:"คำนวณ tan delta", options:["0.8482","0.0804","0.0084","0.0848"], answer:3 },
+  { id:21, text:"ฟ้าผ่าลงสายดิน → เกิดอะไร", options:["ถูกทุกข้อ","Spark Over","Back Flash Over","Flash Over"], answer:2 },
+  { id:22, text:"คำนวณ Uis2", options:["1,590.77 kV","1,560.77 kV","1,506.77 kV","1,509.77 kV"], answer:2 },
+  { id:23, text:"Time to crest (50%)", options:["1.2 µs","1.8 µs","5.5 µs","1.1 µs"], answer:2 },
+  { id:24, text:"คำนวณ Uis1", options:["1,506.77 kV","1,509.77 kV","1,560.77 kV","1,590.77 kV"], answer:3 },
+  { id:25, text:"divider ที่นิยมใช้", options:["ถูกทุกข้อ","C divider","RC divider","R divider"], answer:0 },
+  { id:26, text:"จากรูป คืออุปกรณ์อะไร", options:["Hall Effect current sensor","Coaxial cylindrical impulse resistor","Rogowski coil","Current transformer"], answer:2 },
+  { id:27, text:"การทดสอบ Flash over สำหรับลูกถ้วยฉนวน นิยมทดสอบรูปแบบใด", options:["Impulse 50% test","1 นาที Dry Test","ถูกทุกข้อ","1 นาที Wet Test"], answer:2 },
+  { id:28, text:"ข้อใดต่อไปนี้คือ PD", options:["Water treeing","Electric treeing","ถูกทุกข้อ","Corona discharge"], answer:2 },
+  { id:29, text:"ระบบป้องกันฟ้าผ่าประกอบด้วยอะไรบ้าง", options:["Air terminal, Down conductor, Ground terminal","Air terminal, Franklin rod, Ground terminal","Air terminal, Arrestors, Down conductor","Air terminal, Arrestors, Ground terminal"], answer:0 },
+  { id:30, text:"Standard reference atmospheric condition IEC คืออะไรบ้าง", options:["ความดันบรรยากาศ 1013 hPa","ความชื้นสัมบูรณ์ 11.1 g/m³","ถูกทุกข้อ","อุณหภูมิ 25 องศา"], answer:0 },
+  { id:31, text:"จากรูป พื้นที่แรเงา เรียกว่าอะไร", options:["Striking zone","Protective zone","Operation zone","Lightning zone"], answer:1 },
+  { id:32, text:"จากรูป C1, C2 หมายถึงอะไร", options:["Stray capacitor","Series capacitor","Capacitor divider","Capacitor ratio"], answer:2 },
+  { id:33, text:"การวัดกระแสอิมพัลส์ สามารถวัดได้ด้วยวิธีใด", options:["Series resistance","Rogowski coil","ถูกทุกข้อ","Shunt resistance"], answer:2 },
+  { id:34, text:"จากรูป D1 ต้องทนแรงดันได้ไม่น้อยกว่าเท่าไร", options:["2UD","2UL","2UC","2UT"], answer:3 },
+  { id:35, text:"จากรูป คืออุปกรณ์อะไร", options:["Impulse voltage divider type C","Impulse voltage divider type RC","Impulse voltage divider type R","—"], answer:2 },
+  { id:36, text:"กรณีรูปคลื่นกระแสอิมพัลส์มาตรฐาน 8/20 µs ต้องการค่า Time response ไม่เกินเท่าไร", options:["0.8 µs","8 µs","1.6 µs","20 µs"], answer:2 },
+  { id:37, text:"จากรูป เมื่อ Zw = 393 Ω; H = 46 m, S = 32 kA/µs, US = 525 kV จงคำนวณหาค่ากระแสฟ้าผ่า (i)", options:["56 kA","65 kA","96 kA","100 kA"], answer:2 },
+  { id:38, text:"จากรูป จะหาค่า U ได้จาก?", options:["U = U2(Z1+Z2)/R1","U = U2(R1+R2)/R1","U = U2(Z1+Z2)/Z1","U = U2(R1+R2)/R2"], answer:3 },
+  { id:39, text:"กระแสลัดวงจรด้านทุติยภูมิของหม้อแปลงทดสอบควรมีค่าเท่าไร", options:["2.0 Idy","2.5 Idy","2.0 Isc","2.5 Isc"], answer:3 },
+  { id:40, text:"วิธี DGA ใช้ตรวจจับ PD ประเภทใด", options:["Corona discharge","Internal discharge","ถูกทุกข้อ","Surface discharge"], answer:1 },
+  { id:41, text:"ตามมาตรฐาน ANSI C 57-1973 กำหนดให้ทดสอบ BIL ด้วยรูปคลื่น FWV กี่ครั้ง และ CWV กี่ครั้ง", options:["FWV x2 and CWV x2","FWV x1 and CWV x2","FWV x2 and CWV x1","ไม่มีข้อใดถูก"], answer:1 },
+  { id:42, text:"เพื่อป้องกันความเสียหายต่ออุปกรณ์เครื่องมือวัด ในทางปฏิบัติควรต่อวงจรทดสอบและวัดค่า PD อย่างไร", options:["CD อนุกรมกับ Ct","CD ขนานกับ Ct","CD ขนานกับ Ck","CD อนุกรมกับ Ck"], answer:3 },
+  { id:43, text:"ระบบ solidly grounded 4 wire system จะได้ค่า Ground fault factor เท่าไร", options:["1.25","1.40","1.73","1.15"], answer:0 },
+  { id:44, text:"จากข้อมูลการทดสอบ ลูกถ้วยก้านตรง ANSI Cl.56.2 จะเกิดเจาะทะลุที่ระดับ du/dt เท่าไร", options:["2500 kV/µs","6500 kV/µs","5000 kV/µs","9200 kV/µs"], answer:3 },
+  { id:45, text:"ข้อใดกล่าวถูกต้องเกี่ยวกับ Glynne Bridge", options:["มีความไวต่ำกว่า Schering Bridge","ใช้ Cable shield แบบชั้นเดียวได้","มีผลต่อ stray capacitor","ประกอบด้วยขดลวด 2 ชุด"], answer:1 },
+  { id:46, text:"จากรูป Ce หมายถึงอะไร", options:["Stray capacitor","Sub capacitor","Main capacitor","Divider capacitor"], answer:0 },
+  { id:47, text:"ผลิตภัณฑ์แต่ละชิ้น ต้องทำการทดสอบ โดยโรงงานผู้ผลิต เพื่อตรวจสอบคุณสมบัติตามมาตรฐาน เรียกว่า?", options:["Type tests","Performance tests","Routine tests","Sample tests"], answer:2 },
+  { id:48, text:"จากรูป Cn = 100 pF; n1 = 20; n2 = 10 จงคำนวณหาค่า Cx", options:["500 pF","50 pF","500 nF","50 nF"], answer:1 },
+  { id:49, text:"จากรูป กำหนดให้ R1 = 250 MΩ, R2 = 1.141 MΩ จงคำนวณหาค่า Divider ratio", options:["250","220","218","202"], answer:1 },
+  { id:50, text:"จากรูป Z1, Z2 หมายถึงอะไร", options:["Capacitor divider","ถูกทุกข้อ","Resistor divider","Impedance divider"], answer:1 },
+  { id:51, text:"จากความสัมพันธ์ของระยะฟ้าผ่า/ในเทอมของกระแส ที่ 40 kA จะมีระยะฟ้าผ่าลงประมาณเท่าไร", options:["55 m","60 m","50 m","45 m"], answer:0 },
+  { id:52, text:"จากรูป กำหนดให้ C1 = 0.1 nF, C2 = 20.5 nF จงคำนวณหาค่า Divider ratio", options:["101","100","206","205"], answer:2 },
+  { id:53, text:"หม้อแปลงทดสอบตัวหนึ่ง มีค่าแรงดันทดสอบ 500 kV ขนาด 250 kVA มีกระแสเท่ากับ 0.5 A มีกระแสลัดวงจร 2 A จงคำนวณหาค่าแรงดันลัดวงจรของหม้อแปลง", options:["400 %","40 %","25 %","30 %"], answer:2 },
+  { id:54, text:"จากรูป เป็นตัวอย่าง Arrester ชนิดใด", options:["MO","SiC","ถูกทุกข้อ","ZnO"], answer:1 },
+  { id:55, text:"จากรูป กำหนดให้ Cb = 1 nF; Cs = 10 nF; Rd = 0.55 kΩ; Re = 6.5 kΩ จงคำนวณค่า T1 เมื่อกำหนดเวลามาตรฐานเป็น LI 1.2/50 μs", options:["1.21 μs","1.36 μs","1.48 μs","1.31 μs"], answer:2 },
+  { id:56, text:"จากรูป ระบบแรงดัน 24 kV BIL = 125 kV แรงดันที่เหลือของกับดักที่ 5 kA เท่ากับ 60 kV จงหาตำแหน่งที่ติดตั้งกับดักที่เหมาะสม ให้ความชันหน้าคลื่นของแรงดันเสิร์จ 1,550 kV/μs", options:["4.27 m","4.72 m","4.22 m","4.77 m"], answer:0 },
+  { id:57, text:"กระแสที่กำหนดของหม้อแปลงทดสอบ ขึ้นอยู่กับอะไร", options:["โรงงานผู้ผลิต","วัสดุทดสอบ","สภาวะแวดล้อม","มาตรฐานการทดสอบ"], answer:1 },
+  { id:58, text:"กระแสอิมพัลส์รูปคลื่นฟ้าผ่าสร้างเพื่อใช้ทดสอบอุปกรณ์ชนิดใด", options:["Protective gap","ถูกทุกข้อ","Franklin rod","Lightning arrester"], answer:3 },
+  { id:59, text:"จากรูป กำหนดให้ Scale factor = 4008 จงคำนวณหาค่า Up", options:["53 kV","51 kV","50 kV","52 kV"], answer:3 },
+  { id:60, text:"รากสายดินแท่งกลมยาว 3 m เส้นผ่านศูนย์กลาง 5 cm ความต้านทานจำเพาะของดิน 200 Ω·m จงคำนวณหาความต้านทานรากสายดิน", options:["59 Ω","55 Ω","58 Ω","56 Ω"], answer:2 },
+  { id:61, text:"จากรูป คืออุปกรณ์อะไร", options:["Coaxial cylindrical impulse resistor","Coaxial cylindrical parallel resistor","Coaxial cylindrical series resistor","Coaxial cylindrical shunt resistor"], answer:3 },
+  { id:62, text:"จากรูป CP หมายถึงอะไร", options:["Cable protection","Current probe","Current protection","Current divider"], answer:1 },
+  { id:63, text:"เมื่อ b = 1009.8 hPa; t = 30.6 °C จงคำนวณหาค่า Ub ที่สภาวะบรรยากาศ (กำหนดให้ Ubn = 695 kVp)", options:["679.7 kVp","668.6 kVp","688.7 kVp","674.8 kVp"], answer:1 },
+  { id:64, text:"จากรูป กำหนดให้ TA = 180 nS, TB = 960 nS จงคำนวณหาค่า T1", options:["1.9 μs","468 nS","780 nS","1.3 μs"], answer:3 },
+  { id:65, text:"ความต้านทานจำเพาะ มีหน่วยเป็นอะไร", options:["Ohm-cm","kOhm/cm","Ohm/cm","Ohm"], answer:0 },
+  { id:66, text:"รากสายดินทองแดงหนา 3.5 mm กว้าง 35 mm ยาว 100 m ความต้านทานจำเพาะของดิน 211 Ω·m จงคำนวณหาความต้านทานรากสายดิน", options:["4.50 Ω","4.55 Ω","4.40 Ω","4.45 Ω"], answer:0 },
+  { id:67, text:"เมื่อเกิดฟ้าผ่ากระทบลงบนพื้นโลก บริเวณฐานก้อนเมฆจะพยายามถ่ายเทประจุ เพื่อกลับสู่สภาวะสมดุล ปรากฏการณ์นี้เรียกว่าอะไร", options:["Upward streamers","J&K phenomena","Return stroke","Step leader"], answer:1 },
+  { id:68, text:"จากรูป มีวิธีตรวจจับ PD แบบใดบ้าง", options:["RFCT and AE","AE and CC","RFCT and CC","RF and CC"], answer:3 },
+  { id:69, text:"จากรูป CRO หมายถึงอะไร", options:["Cable rail oscilloscope","Control signal oscilloscope","Current signal oscilloscope","Cathode ray oscilloscope"], answer:3 },
+  { id:70, text:"ในทางปฏิบัติ วงจรสร้างแรงดันอิมพัลส์จะมีความเหนี่ยวนำ ซึ่งอาจทำให้เกิดการออสซิลเลชัน ถ้ากำหนดให้ Cb = 1 nF; Cs = 10 nF; L = 30 μH จงคำนวณหาค่า Rd", options:["363 Ω","636 kΩ","363 kΩ","636 Ω"], answer:0 },
+  { id:71, text:"รูปคลื่นมาตรฐานแรงดันอิมพัลส์ฟ้าผ่าแบบเต็มคลื่น T1 มีค่าเท่าไร", options:["1.2 μs","ถูกทุกข้อ","1.667T","5/3T"], answer:1 },
+  { id:72, text:"เมื่อ U1 = 22.5 kV (50 Hz); Cn = 100 pF; R4 = 5 MΩ; C4 = 54 pF; R3 = 3.6 MΩ จงคำนวณหาค่ามุม delta", options:["4.48 องศา","4.44 องศา","8.44 องศา","4.84 องศา"], answer:3 },
+  { id:73, text:"ถ้า C-divider สำหรับการวัดไฟฟ้าแรงดันสูงอิมพัลส์ มีค่า Time response = 17.5 nS, Ce = 10 pF จงคำนวณหาค่า Rd", options:["1750 Ohm","17.50 kOhm","10.50 kOhm","1050 Ohm"], answer:2 },
+  { id:74, text:"กรณีที่ต้องการแรงดันสูงกว่า 500–600 kV จะนิยมใช้หม้อแปลงทดสอบแบบใด", options:["Symmetrical Tr.","Resonance Tr.","Cascade Tr.","Asymmetrical Tr."], answer:2 },
+  { id:75, text:"มาตรฐานการวัดแรงดันสูงด้วยช่องว่างทรงกลมคือข้อใด", options:["IEC 60270","IEC 60052","IEC 60071","IEC 60060"], answer:1 },
+  { id:76, text:"กระแสฟ้าผ่า 2 AS จะหลอมละลายทองแดงได้เท่าไร", options:["5.4 mm³","10.8 mm³","4.5 mm³","12 mm³"], answer:1 },
+  { id:77, text:"ที่ระยะ gap d = 30 cm; โดยเลือกใช้ทรงกลมขนาด D = 75 cm จงหาค่า Ubn เมื่อต้องการวัดแรงดัน Positive lightning impulse", options:["665 kVrms","665 kVp","695 kVp","695 kVrms"], answer:2 },
+  { id:78, text:"จากรูป คือวงจรอะไร", options:["LC integrator of Rogowski coil","LRC integrator of Rogowski coil","LR integrator of Rogowski coil","RC integrator of Rogowski coil"], answer:3 },
+  { id:79, text:"ปัจจัยสำคัญ ที่มีผลต่อแรงดันตกคร่อมความต้านทานกราวด์สายดิน คืออะไร", options:["di/dt","du/dt","Q","ipeak"], answer:3 },
+  { id:80, text:"รูปคลื่นแรงดันทดสอบ AC มาตรฐานอธิบายได้ด้วยค่าอะไร", options:["Urms/Uave","Upeak/Uave","Upeak/Urms","Urms/Upeak"], answer:2 },
+  { id:81, text:"จากรูป ถ้ามุมป้องกัน = 30°; hg = 45.50 m; ระยะ X = 3.17 m จงคำนวณหาความสูงของสายเฟส", options:["40.8 m","39.5 m","39.0 m","40.0 m"], answer:3 },
+  { id:82, text:"จากรูป C2 ทำหน้าที่อะไร", options:["Voltage increase","Rectifier","Current limit","Current filter"], answer:3 },
+  { id:83, text:"การทดสอบลูกถ้วยฉนวนแบบ Wet test ค่าความต้านทานจำเพาะของน้ำควรมีค่าเท่าไร", options:["900–1,100 Ohm-cm","9,000–11,000 Ohm-cm","9,000–11,000 Ohm-mm","900–1,100 Ohm-mm"], answer:1 },
+  { id:84, text:"ค่าความจุไฟฟ้าของหม้อแปลงไฟฟ้ากำลังพิกัด 1 MVA มีค่าประมาณเท่าไร", options:["100 nF","100 pF","1000 nF","1000 pF"], answer:3 },
+  { id:85, text:"บริเวณฐานพื้นผิวโลก จะมีประจุส่วนใหญ่เป็นอะไร", options:["Protons","Electrons","Ultron","Neutrons"], answer:0 },
+  { id:86, text:"จากรูป Ct คืออะไร", options:["Test capacitor","Coupling capacitor","Test object","Coupling device"], answer:2 },
+  { id:87, text:"จากการทดสอบวัดสัญญาณคลื่นสะท้อนกลับของแรงดันอิมพัลส์ความถี่สูงได้เวลาหน่วง td = 1.35 μs ความยาวของสายเคเบิล 300 m ความเร็วคลื่น v = 1.5 × 10⁸ m/s จงคำนวณหาตำแหน่งบกพร่องของสาย", options:["389.75 m","198.75 m","398.75 m","189.75 m"], answer:1 },
+  { id:88, text:"ข้อใดคือ Electrical methods of PD detection", options:["DGA","AE","RFCT","Optical"], answer:2 },
+  { id:89, text:"ค่ากระแสสูงสุดที่ใช้ทดสอบความคงทนต่อแรงดันไฟฟ้าของสายเคเบิลพิกัด 230 kV ควรมีค่าเท่าไร", options:["< 1 A","= 0.5 A","= 1 A","> 1 A"], answer:3 },
+  { id:90, text:"จากรูป กำหนดให้ค่า C1 = 90.77 pF จงคำนวณหาค่า L1", options:["35 mH","45 mH","35 µH","45 µH"], answer:0 },
+  { id:91, text:"จากรูป อุปกรณ์ตัวไหนมีหน้าที่กำหนดระดับแรงดัน Uo", options:["SG","Cs","Ug","RL"], answer:0 },
+];
+
+const labels = ['A', 'B', 'C', 'D'];
+const state = {}; // { qId: { chosen: idx, correct: bool } }
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  questions.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${q.id}`;
+
+    const qText = q.options.length === 4 ? q.text : q.text;
+
+    let opts = '';
+    q.options.forEach((opt, i) => {
+      if(opt === '—') return;
+      opts += `<button class="option-btn" id="btn-${q.id}-${i}" onclick="answer(${q.id}, ${i})">`
+             + `<span class="option-label">${labels[i]}</span>`
+             + `<span>${opt}</span></button>`;
+    });
+
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-number">ข้อ ${q.id}</span>
+        <div class="q-text">${qText}</div>
+      </div>
+      <div class="options" id="opts-${q.id}">${opts}</div>
+      <div id="result-${q.id}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answer(qId, chosen) {
+  if (state[qId] !== undefined) return;
+
+  const q = questions.find(x => x.id === qId);
+  const isCorrect = chosen === q.answer;
+  state[qId] = { chosen, correct: isCorrect };
+
+  // Disable all buttons
+  for(let i = 0; i < q.options.length; i++) {
+    const btn = document.getElementById(`btn-${qId}-${i}`);
+    if(!btn) continue;
+    btn.disabled = true;
+    if(i === q.answer) btn.classList.add('reveal-correct');
+  }
+
+  const chosenBtn = document.getElementById(`btn-${qId}-${chosen}`);
+  if(chosenBtn) {
+    chosenBtn.classList.remove('reveal-correct');
+    chosenBtn.classList.add(isCorrect ? 'correct' : 'wrong');
+  }
+
+  const card = document.getElementById(`card-${qId}`);
+  card.classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
+
+  const resultDiv = document.getElementById(`result-${qId}`);
+  resultDiv.innerHTML = isCorrect
+    ? `<span class="result-badge correct">✓ ถูกต้อง!</span>`
+    : `<span class="result-badge wrong">✗ ผิด — เฉลย: ${labels[q.answer]}. ${q.options[q.answer]}</span>`;
+
+  updateStats();
+}
+
+function updateStats() {
+  const answered = Object.keys(state).length;
+  const correct = Object.values(state).filter(s => s.correct).length;
+  const wrong = answered - correct;
+  const score = answered > 0 ? Math.round(correct / answered * 100) : 0;
+
+  document.getElementById('val-answered').textContent = answered;
+  document.getElementById('val-correct').textContent = correct;
+  document.getElementById('val-wrong').textContent = wrong;
+  document.getElementById('val-score').textContent = answered > 0 ? score + '%' : '—';
+  document.getElementById('progress-fill').style.width = (answered / 91 * 100) + '%';
+}
+
+function filterQ(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  questions.forEach(q => {
+    const card = document.getElementById(`card-${q.id}`);
+    let show = true;
+    if(type === 'unanswered') show = state[q.id] === undefined;
+    else if(type === 'correct') show = state[q.id]?.correct === true;
+    else if(type === 'wrong') show = state[q.id]?.correct === false;
+    card.classList.toggle('hidden', !show);
+  });
+}
+
+function showScore() {
+  const answered = Object.keys(state).length;
+  const correct = Object.values(state).filter(s => s.correct).length;
+  const pct = answered > 0 ? Math.round(correct / 91 * 100) : 0;
+
+  let grade = '', emoji = '';
+  if(pct >= 90) { grade = 'ยอดเยี่ยม! 🏅'; emoji = '🌟'; }
+  else if(pct >= 80) { grade = 'ดีมาก'; emoji = '🎯'; }
+  else if(pct >= 70) { grade = 'ดี'; emoji = '👍'; }
+  else if(pct >= 60) { grade = 'พอใช้'; emoji = '📚'; }
+  else { grade = 'ต้องฝึกเพิ่ม'; emoji = '💪'; }
+
+  document.getElementById('modal-score-val').textContent = pct + '%';
+  document.getElementById('modal-grade').textContent = emoji + ' ' + grade;
+  document.getElementById('modal-detail').textContent =
+    `ตอบถูก ${correct} ข้อ จาก ${answered} ข้อที่ตอบ (ทั้งหมด 91 ข้อ)`;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if(e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function resetAll() {
+  if(!confirm('ต้องการเริ่มใหม่ทั้งหมดหรือไม่?')) return;
+  Object.keys(state).forEach(k => delete state[k]);
+  buildQuiz();
+  updateStats();
+  filterQ('all', document.querySelector('.filter-btn'));
+}
+
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scroll-top-btn');
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+buildQuiz();
+updateStats();
+</script>
+</body>
+</html>
